@@ -107,15 +107,20 @@ if __name__ == '__main__':
 
     logger.info("Attempting to load pre-trained model")
     model_location = loc.format('assets/model.pkl')
+    data_location = loc.format("assets/data.csv")
     if os.path.isfile(model_location):
         logger.info("Found pre-trained model at {}".format(model_location))
         rm.load_pre_trained_model(loc.format('assets/model.pkl'))
-    else:
+    elif os.path.isfile(data_location):
         logger.info("No trained model found, attempting to build model now...")
-
-        data_location = loc.format("assets/data.csv")
         logger.info("Attempting to load data from {}".format(data_location))
-        data = DataLoader(data_location)
+
+        data = DataLoader.from_filepath(data_location)
+        rm.load(data)
+        rm.train()
+    else:
+        logger.info("No data found. Loading from Google Sheets.")
+        data = DataLoader.from_google_sheet(os.getenv('LUNCH_SHEET_ID'))
         rm.load(data)
         rm.train()
 

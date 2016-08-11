@@ -1,6 +1,6 @@
-from barracks.util import get_canned_header, get_default_root_logger, get_path
-
-from .bot import DataLoader, Recommender
+from barracks.lunch_bot.util import get_canned_header, get_default_root_logger, get_path
+from barracks.lunch_bot.bot import DataLoader, Recommender
+import os
 
 # call train_bot.py if you need to train the model.
 # Save the trained results to disk so run_bot.py can simply load the model.
@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     logger = get_canned_header(logger, 'Training LunchBot')
 
-    dl = DataLoader(loc.format('assets/survey_data.csv'))
+    dl = DataLoader.from_google_sheet(os.getenv('LUNCH_SHEET_ID'))
 
     # load and train recommender
     recommender = Recommender()
@@ -21,8 +21,3 @@ if __name__ == '__main__':
     recommender.train()
 
     recommender.save_model(loc.format('assets/model.pkl'))
-
-
-
-
-
